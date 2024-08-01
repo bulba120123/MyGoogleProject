@@ -6,13 +6,18 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SignupModule } from './signup/signup.module';
 import { DatabaseModule } from './database/database.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    SignupModule],
+    SignupModule,
+    DatabaseModule,
+    AccountManagementModule,
+    AwsModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

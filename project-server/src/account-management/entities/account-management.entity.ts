@@ -1,6 +1,7 @@
-import { CreateDateColumn, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Column } from "typeorm/decorator/columns/Column";
 
+@Entity()
 export class Account {
     @PrimaryGeneratedColumn()
     id: number;

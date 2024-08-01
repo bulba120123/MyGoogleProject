@@ -1,38 +1,24 @@
-import { Module, Global, Logger } from '@nestjs/common';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { ConfigService, ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
-@Global()
 @Module({
   imports: [
-    ConfigModule,
+    ConfigModule.forRoot({
+      isGlobal: true, // 전역 모듈로 설정하여 어디서든 접근 가능하게 함
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        const options: TypeOrmModuleOptions = {
-          type: 'postgres',
-          host: configService.get<string>('DB_HOST'),
-          port: configService.get<number>('DB_PORT'),
-          username: configService.get<string>('DB_USERNAME'),
-          password: configService.get<string>('DB_PASSWORD'),
-          database: configService.get<string>('DB_DATABASE'),
-          entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-          synchronize: true,
-        };
-
-        try {
-          // 데이터베이스 연결 시도
-          const connection = await TypeOrmModule.forRoot(options);
-          return connection["options"];
-        } catch (error) {
-          console.error('Database connection failed:', error.message);
-          // 연결 실패 시 빈 옵션 반환
-          return {
-            type: 'postgres',
-            entities: [],
-          };
-        }
-      },
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+        synchronize: true, // 개발 중에는 true로 설정하고, 프로덕션 환경에서는 false로 변경하세요.
+      }),
       inject: [ConfigService],
     }),
   ],

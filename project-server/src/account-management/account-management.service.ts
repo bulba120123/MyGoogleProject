@@ -30,7 +30,7 @@ export class AccountManagementService {
 
     const id = savedAccount.id
     const createId = (2000 + id).toString().padStart(5, '0');
-    const userId = `mockeleven${createId}`
+    const userId = `${userIdPrefix}${createId}`
 
     savedAccount.userId = userId
     savedAccount.email = `${userId}@gmail.com`
@@ -38,8 +38,8 @@ export class AccountManagementService {
     if (!savedAccount.password) {
       const generatedPassword = this.generatePassword(savedAccount.id);
       savedAccount.password = generatedPassword;
-      await this.accountRepository.save(savedAccount);
     }
+    await this.accountRepository.save(savedAccount);
 
     return savedAccount;
   }
