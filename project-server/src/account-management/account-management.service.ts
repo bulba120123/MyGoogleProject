@@ -14,7 +14,7 @@ export class AccountManagementService {
     private readonly accountRepository: Repository<Account>,
     private readonly configService: ConfigService,
   ) {}
-  
+
   findAll(): Promise<Account[]> {
     return this.accountRepository.find();
   }
@@ -23,18 +23,18 @@ export class AccountManagementService {
     return this.accountRepository.findOneBy({ id });
   }
 
-  async create(account: Account): Promise<Account> {    
+  async create(account: Account): Promise<Account> {
     const savedAccount = await this.accountRepository.save(account);
 
     const userIdPrefix = this.configService.get<string>('USER_ID_PREFIX');
 
-    const id = savedAccount.id
+    const id = savedAccount.id;
     const createId = (2000 + id).toString().padStart(5, '0');
-    const userId = `${userIdPrefix}${createId}`
+    const userId = `${userIdPrefix}${createId}`;
 
-    savedAccount.userId = userId
-    savedAccount.email = `${userId}@gmail.com`
-    
+    savedAccount.userId = userId;
+    savedAccount.email = `${userId}@gmail.com`;
+
     if (!savedAccount.password) {
       const generatedPassword = this.generatePassword(savedAccount.id);
       savedAccount.password = generatedPassword;
@@ -43,7 +43,6 @@ export class AccountManagementService {
 
     return savedAccount;
   }
-
 
   async update(id: number, account: Account): Promise<Account> {
     await this.accountRepository.update(id, account);
@@ -67,7 +66,8 @@ export class AccountManagementService {
   }
 
   private generatePassword(id: number): string {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const passwordLength = 8;
     let password = '';
 

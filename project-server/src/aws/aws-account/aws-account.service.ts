@@ -20,12 +20,15 @@ export class AwsAccountService {
   }
 
   findOne(id: number): Promise<AwsAccount> {
-    return this.awsAccountRepository.findOneBy({id});
+    return this.awsAccountRepository.findOneBy({ id });
   }
 
-  async update(id: number, updateAwsAccountDto: Partial<AwsAccount>): Promise<AwsAccount> {
+  async update(
+    id: number,
+    updateAwsAccountDto: Partial<AwsAccount>,
+  ): Promise<AwsAccount> {
     await this.awsAccountRepository.update(id, updateAwsAccountDto);
-    return this.awsAccountRepository.findOneBy({id});
+    return this.awsAccountRepository.findOneBy({ id });
   }
 
   async remove(id: number): Promise<void> {

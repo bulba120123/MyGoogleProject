@@ -16,9 +16,9 @@ import { AwsModule } from './aws/aws.module';
     SignupModule,
     DatabaseModule,
     AccountManagementModule,
-    AwsModule
+    AwsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

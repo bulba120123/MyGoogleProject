@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { AccountManagementService } from './account-management.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountManagementDto } from './dto/update-account.dto';
@@ -6,7 +15,9 @@ import { Account } from './entities/account-management.entity';
 
 @Controller('account-management')
 export class AccountManagementController {
-  constructor(private readonly accountManagementService: AccountManagementService) {}
+  constructor(
+    private readonly accountManagementService: AccountManagementService,
+  ) {}
 
   @Get()
   findAll(): Promise<Account[]> {
@@ -22,13 +33,13 @@ export class AccountManagementController {
   create(@Body() createAccountDto: CreateAccountDto): Promise<Account> {
     const account: Account = {
       ...createAccountDto,
-      id: undefined,  
-      userId: '', 
+      id: undefined,
+      userId: '',
       email: '',
     };
     return this.accountManagementService.create(account);
   }
-  
+
   @Put(':id')
   update(@Param('id') id: number, @Body() account: Account): Promise<Account> {
     return this.accountManagementService.update(id, account);
@@ -38,7 +49,6 @@ export class AccountManagementController {
   remove(@Param('id') id: number): Promise<void> {
     return this.accountManagementService.remove(id);
   }
-
 
   @Patch(':id/reserve')
   reserve(@Param('id') id: number): Promise<Account> {
