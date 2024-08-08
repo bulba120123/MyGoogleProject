@@ -1,54 +1,89 @@
 "use client";
-// pages/index.js
 import Head from "next/head";
 import styles from "./styles/page.module.css";
 import AccountCard from "./components/account-card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Account } from "./types";
+import axios from "axios";
+import dayjs from "dayjs";
 
 export default function Home() {
-  const [accounts, setAccounts] = useState<Account[]>([
-    { id: 1, name: "John Doe", account: "john_doe", password: "password123" },
-    {
-      id: 2,
-      name: "Jane Smith",
-      account: "jane_smith",
-      password: "password456",
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      account: "bob_johnson",
-      password: "password789",
-    },
-  ]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [newAccount, setNewAccount] = useState<Account>({
-    id: 0,
-    name: "",
-    account: "",
-    password: "",
+    accountName: "",
+    accountId: "",
+    accountPassword: "",
+    isActive: false,
+    createAt: "", // 빈 문자열로 초기화
   });
 
-  const updateAccount = (id: number, updatedAccount: Account) => {
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await axios.get("http://localhost:8010/aws-account");
+        const sortedAccounts = response.data.sort(
+          (a: Account, b: Account) =>
+            dayjs(a.createAt).valueOf() - dayjs(b.createAt).valueOf()
+        );
+        setAccounts(sortedAccounts);
+      } catch (error) {
+        console.error("Failed to fetch accounts", error);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
+
+  const updateAccount = (accountId: string, updatedAccount: Account) => {
     setAccounts(
-      accounts.map((account) => (account.id === id ? updatedAccount : account))
+      accounts.map((account) =>
+        account.accountId === accountId ? updatedAccount : account
+      )
     );
+  };
+
+  const removeAccount = (accountId: string) => {
+    setAccounts(accounts.filter((account) => account.accountId !== accountId));
   };
 
   const handleAddClick = () => setIsAdding(true);
 
-  const handleSaveClick = () => {
-    const accountUpdate = { ...newAccount };
-    accountUpdate.id = accounts.length + 1;
-    setAccounts([...accounts, accountUpdate]);
-    setIsAdding(false);
-    setNewAccount({ id: 0, name: "", account: "", password: "" });
+  const handleSaveClick = async () => {
+    try {
+      const response = await axios.post("http://localhost:8010/aws-account", {
+        accountId: newAccount.accountId,
+        accountPassword: newAccount.accountPassword,
+        accountName: newAccount.accountName,
+      });
+      const addedAccount = response.data;
+      setAccounts((prevAccounts) =>
+        [...prevAccounts, addedAccount].sort(
+          (a, b) => dayjs(a.createAt).valueOf() - dayjs(b.createAt).valueOf()
+        )
+      );
+      setIsAdding(false);
+      setNewAccount({
+        accountName: "",
+        accountId: "",
+        accountPassword: "",
+        isActive: false,
+        createAt: "",
+      });
+    } catch (error) {
+      console.error("Failed to add account", error);
+    }
   };
 
   const handleCancelClick = () => {
     setIsAdding(false);
-    setNewAccount({ id: 0, name: "", account: "", password: "" });
+    setNewAccount({
+      accountName: "",
+      accountId: "",
+      accountPassword: "",
+      isActive: false,
+      createAt: "",
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,24 +109,24 @@ export default function Home() {
               <>
                 <input
                   type="text"
-                  name="name"
-                  value={newAccount.name}
+                  name="accountName"
+                  value={newAccount.accountName}
                   onChange={handleChange}
                   className={styles.input}
                   placeholder="Name"
                 />
                 <input
                   type="text"
-                  name="account"
-                  value={newAccount.account}
+                  name="accountId"
+                  value={newAccount.accountId}
                   onChange={handleChange}
                   className={styles.input}
                   placeholder="Account"
                 />
                 <input
                   type="password"
-                  name="password"
-                  value={newAccount.password}
+                  name="accountPassword"
+                  value={newAccount.accountPassword}
                   onChange={handleChange}
                   className={styles.input}
                   placeholder="Password"
@@ -119,9 +154,10 @@ export default function Home() {
           </div>
           {accounts.map((account) => (
             <AccountCard
-              key={account.id}
+              key={account.accountId}
               account={account}
               updateAccount={updateAccount}
+              removeAccount={removeAccount}
             />
           ))}
         </div>

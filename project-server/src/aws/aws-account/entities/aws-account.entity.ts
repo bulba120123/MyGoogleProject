@@ -1,6 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('aws_account')
+@Unique(['accountId'])
 export class AwsAccount {
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,9 +19,18 @@ export class AwsAccount {
   @Column()
   accountPassword: string;
 
-  @Column()
+  @Column({ nullable: true })
   accountName: string;
 
-  @Column()
-  accountEmail: string;
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
+
+  @Column({ nullable: true })
+  activeAt: Date;
+
+  @Column({ default: false })
+  isActive: boolean;
 }

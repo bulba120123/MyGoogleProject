@@ -1,12 +1,14 @@
 // types.ts
 export interface Account {
-  id: number;
-  name: string;
-  account: string;
-  password: string;
+  accountId: string;
+  accountName: string;
+  accountPassword: string;
+  isActive: boolean;
+  createAt: string;
 }
 
 export interface AccountCardProps {
   account: Account;
-  updateAccount: (id: number, updatedAccount: Account) => void;
+  updateAccount: (accountId: string, updatedAccount: Account) => void;
+  removeAccount: (accountId: string) => void;
 }
