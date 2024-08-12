@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SignupModule } from './signup/signup.module';
 import { DatabaseModule } from './database/database.module';
 import { AwsModule } from './aws/aws.module';
+import { KubernetesModule } from './kubernetes/kubernetes.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AwsModule } from './aws/aws.module';
     DatabaseModule,
     AccountManagementModule,
     AwsModule,
+    KubernetesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
